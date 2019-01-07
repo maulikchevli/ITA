@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<script>
+	function startTimer() {
+		var today = new Date();
+		var h = today.getHours();
+		var m = today.getMinutes();
+		var s = today.getSeconds();
+
+		m = prependZero( m);
+		s = prependZero( s);
+
+		document.getElementById('txt').innerHTML = h + ":" + m + ":" + s;
+
+		var t = setInterval( startTimer, 1000);
+	}
+
+	function prependZero( x) {
+		if ( x < 10) {
+			x = "0" + x;
+		}
+		return x;
+	}
+</script>
+
+<body onload="startTimer()">
+
+	<div id="txt"></div>
+
+</body>
+
+</html>

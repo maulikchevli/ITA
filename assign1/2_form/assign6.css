@@ -1,0 +1,37 @@
+.tag{
+  float: left;
+  width: 20%;
+}
+#field {
+  border-left-style: none;
+  border-right-style: none;
+  border-top-style: none;
+  border-bottom-color: green;
+}
+#req:after {
+  color: #e32;
+  content: " *"
+}
+.field {
+  display: block;
+  margin-left: 25%;
+
+}
+.Info {
+  padding-top: 50px;
+  display: inline-block;
+}
+.ast {
+  float: left;
+  color: #e32;
+}
+
+#captcha {
+  height: 150px;
+}
+
+#name,#username,#password,#password2,#email,#email2 {
+  color: red;
+  font-size: 15px;
+
+}
