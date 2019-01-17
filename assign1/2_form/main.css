@@ -30,8 +30,9 @@
   height: 150px;
 }
 
-#name,#username,#password,#password2,#email,#email2 {
+#name,#username,#password,#password2,#email,#moNum {
   color: red;
   font-size: 15px;
 
 }
+
