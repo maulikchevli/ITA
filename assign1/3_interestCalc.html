@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Simple Interest</title>
+	</head>
+
+	<body>
+		<form method="get" name="form" onsubmit="calInterest(event)">
+			<label for="principal">Amount</label>
+			<input type="text" id="principal" name="p">
+
+			<br>
+
+			<label for="rate">Rate</label>
+			<input type="text" id="rate" name="r">
+
+			<br>
+
+			<label for="years">Years</label>
+			<input type="text" id="years" name="n">
+
+			<br>
+
+			<button type="submit">Calculate</button>
+		</form>
+	</body>
+
+	<script>
+		function calInterest(event) {
+			event.preventDefault();
+
+			var p = document.forms["form"]["p"].value;
+			var n = document.forms["form"]["n"].value;
+			var r = document.forms["form"]["r"].value;
+
+			var interest = (p * n * r) / 100;
+
+			var win = window.open('about:blank','name','resizable');
+			win.document.write("Interest is : " + interest);
+		}
+	</script>
+</html>
+
