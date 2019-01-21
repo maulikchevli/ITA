@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SVNIT</title>
+</head>
+
+<body onload="changeSlide()">
+	<header>
+		<h1>SVNIT</h1>
+	</header>
+
+	<main>
+		<div class="carousel">
+			<div id="slideShow">
+				<img id="slide" src="img/1.jpeg">
+			</div>
+		</div>
+	</main>
+
+	<footer>
+	</footer>
+</body>
+
+<script>
+	var i = 2;
+	function changeSlide() {
+		i = i + 1;
+		i = (i%3);
+
+		document.getElementById("slide").src = "img/" + i + ".jpeg";
+
+		var t = setTimeout( changeSlide, 5000);
+	}
+</script>
+</html>
