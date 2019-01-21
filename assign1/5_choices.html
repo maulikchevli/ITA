@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SVNIT form</title>
+</head>
+
+<body>
+	<header>
+		<h1>SVNIT</h1>
+		<h2>Form</h2>
+	</header>
+
+	<main>
+		<form onsubmit="displayOptions(event);">
+			<input type="checkbox" name="newsLetter" value="newLetter" onclick="loadOptions();"> 
+			<label for="newsletter">Receive NewLetter</label>
+
+			<br>
+
+			<div class="newLetter-options" id="options" style="display:none;">
+				<p>Select Options</p>
+
+				<input type="checkbox" name="options" value="annual fest">
+				<label>Annual Fest</label>
+				<br>
+
+				<input type="checkbox" name="options" value="Drishti">
+				<label>Drishti</label>
+				<br>
+				
+				<input type="checkbox" name="options" value="Student chapters">
+				<label>Student chapters</label>
+				<br>
+
+				<input type="checkbox" name="options" value="STTP">
+				<label>summer schools</label>
+				<br>
+
+				<input type="checkbox" name="options" value="Workshops">
+				<label>Workshops</label>
+				<br>
+
+			</div>
+
+			<br>
+			<input type="submit" value="Submit">
+		</form>
+	</main>
+
+	<footer>
+	</footer>
+</body>
+
+<script>
+	function loadOptions() {
+		var opDisplay = document.getElementById("options");
+
+		if ( opDisplay.style.display == 'none') {
+			opDisplay.style.display = 'block';
+		} else {
+			opDisplay.style.display = 'none';
+		}
+	}
+
+	function displayOptions(event) {
+		event.preventDefault();
+
+		var options = document.getElementsByName('options');
+
+		txt = "You selected following options :<br>"
+		for ( var i=0; i < options.length; i++) {
+			if ( options[i].checked)
+				txt += options[i].value + "<br>";
+		}
+		
+		var win = window.open('about:blank','name');
+		win.document.write(txt);
+	}
+</script>
+</html>
