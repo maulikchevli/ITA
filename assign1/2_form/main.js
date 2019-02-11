@@ -36,7 +36,7 @@ function validateForm(event) {
 	//for email
 	var email = document.forms["myform"]["email"].value;
 
-	var emailReg = /^[a-z](\w*)@([a-z]{3})$/g;
+	var emailReg = /^[a-z](\w*)@(\w+).([a-z]{3})$/g;
 	//var emailReg = new RegExp('[a-z]','g');
 	var res = email.search(emailReg);
 
