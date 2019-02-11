@@ -8,18 +8,23 @@
 
 <body>
 	<center>
-		<canvas id="gameBoard" width="300" height="300"></canvas>
+		<h1>Snake and Ball</h1>
+
+		<canvas id="gameBoard" width="500" height="500"></canvas>
+		<br>
 		<span>
-			<input type="button">
-			<input type="button">
-			<input type="button">
-			<input type="button">
+			<input type="button" value="UP" onclick="changeDirection(38)">
+
+			<br>
+			<input type="button" value="LEFT" onclick="changeDirection(37)">
+			<input type="button" value="DOWN" onclick="changeDirection(40)">
+			<input type="button" value="RIGHT" onclick="changeDirection(39)">
 		</span>
 
-		<div id="score">0</div>
+		<br>
+		<span>SCORE: <span id="score">0</span></span>
 	</center>
 </body>
-
 
 <script src="./snake.js"></script>
 </html>

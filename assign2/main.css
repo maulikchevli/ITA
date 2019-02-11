@@ -1,5 +1,12 @@
+body {
+	background-color: black;
+	color: white;
+}
+
 #gameBoard {
 	width: 300;
 	height: 300;
+	background-color: black;
+	color: white;
 }
 

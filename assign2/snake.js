@@ -1,7 +1,7 @@
-const GAME_BOARD_BORDER = "black";
-const GAME_BOARD_COLOR = "white";
+const GAME_BOARD_BORDER = "red";
+const GAME_BOARD_COLOR = "black";
 const SNAKE_COLOR = "red";
-const SNAKE_BORDER_COLOR = "black";
+const SNAKE_BORDER_COLOR = "yellow";
 
 var gameBoard = document.getElementById("gameBoard");
 
@@ -57,7 +57,7 @@ function advanceSnake()  {
 		snake.pop();
 }
 
-function changeDirection( event) {
+function changeDirection( keyPressed) {
 	if ( changingDirection)
 		return;
 
@@ -68,7 +68,7 @@ function changeDirection( event) {
 
 	changingDirection = true;
 
-    const keyPressed = event.keyCode;
+    //const keyPressed = event.keyCode;
     const goingUp = dy_g === -10;
     const goingDown = dy_g === 10;
     const goingRight = dx_g === 10;
@@ -130,9 +130,6 @@ function didGameEnd() {
 	}
 }
 
-function showClick( n) {
-	alert(n);
-}
 
 function main() {
 	if ( didGameEnd())
@@ -147,16 +144,13 @@ function main() {
 		drawSnake();
 
 		main();
-	}, 100 )
+	}, 150 )
 }
 
 /* Main
  * 
  * 
  */
-
-document.addEventListener("keydown", changeDirection);
-document.addEventListener("onclick", showClick( 10));
 
 clearBoard();
 drawSnake();
