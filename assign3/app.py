@@ -1,3 +1,4 @@
+import os
 import sqlite3 as sql
 from functools import wraps
 from flask import Flask, render_template, redirect, url_for, session, jsonify, request
@@ -26,9 +27,16 @@ def login_required(f):
 def index():
 	return render_template( 'index.html')
 
-@app.route('/post')
+@app.route('/post', methods = ['POST', 'GET'])
 def post():
-	return render_template( 'post.html')
+	if request.method == 'GET':
+		return render_template( 'post.html')
+	else:
+		image = request.files['image']
+		if image:
+			filename = secure_filename(image.filename)
+			image.save( os.path.join( app.config['UPLOAD_FOLDER'], filename))
+			return redirect( url_for('index'))
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
