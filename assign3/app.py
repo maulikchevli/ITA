@@ -62,6 +62,22 @@ def search(query):
 	con.close()
 	return jsonify(res)
 
+@app.route('/profile/<username>', methods = ['POST', 'GET'])
+@login_required
+def profile(username):
+	con = sql.connect('ensta.db')
+	cur = con.cursor()
+	cur.row_factory = dict_factory
+
+	user = cur.execute('select * from users where username=?', (username,))
+	user = user.fetchone()
+	posts = cur.execute('select * from posts where username=? order by pid desc', (username,))
+	posts = posts.fetchall()
+
+	print(user)
+	print(posts)
+	return render_template('profile.html',user=user, posts=posts)
+
 @app.route('/post', methods = ['POST', 'GET'])
 def post():
 	if request.method == 'GET':
