@@ -43,12 +43,11 @@ def search(query):
 		users = users.fetchall()
 
 		for user in users:
-			post = cur.execute('select pid,tags from posts where username=?', (user['username'],))
-			post = post.fetchall()
-
-			if post:
-				if query in post[0]['tags']:
-					res['posts'].append(post[0]['pid'])
+			posts = cur.execute('select pid,tags from posts where username=?', (user['username'],))
+			posts = posts.fetchall()
+			for post in posts:
+				if query in post['tags']:
+					res['posts'].append(post['pid'])
 
 	else:
 		users = cur.execute('select username,firstname,lastname from users');
@@ -69,13 +68,11 @@ def profile(username):
 	cur = con.cursor()
 	cur.row_factory = dict_factory
 
-	user = cur.execute('select * from users where username=?', (username,))
+	user = cur.execute('select username,firstName,lastName,email,birthDate,bio from users where username=?', (username,))
 	user = user.fetchone()
 	posts = cur.execute('select * from posts where username=? order by pid desc', (username,))
 	posts = posts.fetchall()
 
-	print(user)
-	print(posts)
 	return render_template('profile.html',user=user, posts=posts)
 
 @app.route('/post', methods = ['POST', 'GET'])
