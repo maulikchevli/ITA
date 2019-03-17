@@ -1,4 +1,5 @@
 CREATE TABLE posts (
+	pid integer primary key autoincrement,
 	username text not null,
 	title text not null,
 	filename text not null,
