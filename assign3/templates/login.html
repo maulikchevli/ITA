@@ -7,7 +7,8 @@
 {% block header %}{% endblock %}
 
 {% block main %}
-	<h1>Login</h1>
+<h1>Login</h1>
+<div class="conatiner">
 	<form method="post" action="{{ url_for('login') }}">
 		<div class="form-group">
 			<label for="username">Username</label>
@@ -21,6 +22,7 @@
 
 		<button type="submit" class="btn btn-outline-success">Login</button>
 	</form>
+</div>
 {% endblock %}
 
 {% block footer %}

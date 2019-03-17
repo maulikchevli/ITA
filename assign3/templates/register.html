@@ -8,7 +8,8 @@
 {% endblock %}
 
 {% block main %}
-	<h1>Sign Up</h1>
+<h1>Sign Up</h1>
+<div class="register">
 	<form method="post" action="{{ url_for('register') }}">
 		<div class="form-row">
 			<div class="form-group col">
@@ -56,6 +57,7 @@
 
 		<button type="submit" class="btn btn-outline-success">Register</button>
 	</form>
+</div>
 {% endblock %}
 
 {% block footer %}
