@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post["pid"] }}{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block main %}
+<div class="container">
+	<h3>Posts</h3>
+
+	<div class="post">
+		<p class="row">
+			<a href="{{ url_for('blog', pid=post['pid']) }}">{{ post["title"] }}</a>
+		</p>
+
+		<p>By @<a href="{{ url_for('profile', username=post['username']) }}">{{ post["username"] }}</a></p>
+
+		<div class="row">
+			<img src="{{ url_for('static', filename='uploads/'+post['username']+'/'+post['filename']) }}"
+			     class="img-fluid">
+		</div>
+
+		<div class="tags">
+			<textarea class="form-control" rows="3" disabled>{{ post["tags"] }}</textarea>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+	<p>Byee</p>
+{% endblock %}
+

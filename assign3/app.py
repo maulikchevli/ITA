@@ -81,12 +81,26 @@ def profile(username):
 	posts = cur.execute('select * from posts where username=? order by pid desc', (username,))
 	posts = posts.fetchall()
 
+	con.close()
 	return render_template('profile.html',user=user, posts=posts)
+
+@app.route('/blog/<pid>')
+@login_required
+def blog(pid):
+	con = sql.connect('ensta.db')
+	cur = con.cursor()
+	cur.row_factory = dict_factory
+
+	post = cur.execute('select * from posts where pid=?', (pid,))
+	post = post.fetchone()
+
+	con.close()
+	return render_template('blog.html', post=post)
 
 @app.route('/post', methods = ['POST', 'GET'])
 def post():
 	if request.method == 'GET':
-		return render_template( 'post.html')
+		return render_template('post.html')
 	else:
 		image = request.files['image']
 		title = request.form['title']
@@ -110,22 +124,23 @@ def post():
 			session['flashMsg'] = "Sucess!"
 			return redirect( url_for('index'))
 
-@app.route('/delete/<pid>')
+@app.route('/delete/<pid>', methods=['POST', 'GET'])
 @login_required
 def delete(pid):
-	con = sql.connect('ensta.db')
-	cur = con.cursor()
-	cur.row_factory = dict_factory
+	if request.method == "POST":
+		con = sql.connect('ensta.db')
+		cur = con.cursor()
+		cur.row_factory = dict_factory
 
-	isOwner = cur.execute('select pid from posts where pid=? and username=?', (pid, session["username"]))
-	isOwner = isOwner.fetchall()
-	if isOwner:
-		cur.execute('delete from posts where pid=?', (pid,))
-		con.commit()
-		session["flashMsg"] = "Deleted"
-	else:
-		session["flashErr"] = "Sorry, you dont have the previlage to delete the post"
-	return redirect( url_for('profile', username=session["username"]))	
+		isOwner = cur.execute('select pid from posts where pid=? and username=?', (pid, session["username"]))
+		isOwner = isOwner.fetchall()
+		if isOwner:
+			cur.execute('delete from posts where pid=?', (pid,))
+			con.commit()
+			session["flashMsg"] = "Deleted"
+		else:
+			session["flashErr"] = "Sorry, you dont have the previlage to delete the post"
+		return redirect( url_for('profile', username=session["username"]))	
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():

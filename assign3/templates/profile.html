@@ -7,34 +7,47 @@
 
 {% block main %}
 <div class="container">
-	<div class="row">
-		<h1>{{ user["firstName"] }} {{ user["lastName"] }}</h1> @{{ user["username"] }}
-	</div>
+	<h1>{{ user["firstName"] }} {{ user["lastName"] }}</h1>
+	
+	<hr>
+	<dl class="row">
+		<dt class="col-sm-3">username</dt>
+		<dd class="col-sm-9">{{ user["username"] }}</dd>
 
-	<div class="row">
-		<div class="col">{{ user["email"] }}</div>
-	</div>
+		<dt class="col-sm-3">Birthdate</dt>
+		<dd class="col-sm-9">{{ user["birthDate"] }}</dd>
 
-	<div class="row">
-		<div class="col">{{ user["bio"] }}</div>
-	</div>
+		<dt class="col-sm-3">Bio</dt>
+		<dd class="col-sm-9">{{ user["bio"] }}</dd>
+	</dl>
 </div>
+
+<hr>
 
 <div class="container">
 	<h3>Posts</h3>
 
 	{% for post in posts %}
 	<div class="post">
-		<div class="row">
-			{{ post["title"] }}
-		</div>
+		<p class="row">
+			<span class="col-sm-9">
+				<a href="{{ url_for('blog', pid=post['pid']) }}">{{ post["title"] }}</a>
+			</span>
+
+			<form method="POST" action="{{ url_for('delete', pid=post['pid']) }}" class="col-sm-3">
+				<input type="submit" value="Delete" class="btn btn-outline-danger">
+			</form>
+		</p>
+
+		<p>By @<a href="{{ url_for('profile', username=post['username']) }}">{{ post["username"] }}</a></p>
 
 		<div class="row">
-			<img src="{{ url_for('static', filename='uploads/'+user['username']+'/'+post['filename']) }}">
+			<img src="{{ url_for('static', filename='uploads/'+post['username']+'/'+post['filename']) }}"
+			     class="img-fluid">
 		</div>
 
 		<div class="tags">
-			<textarea rows="3" disabled>{{ post["tags"] }}</textarea>
+			<textarea class="form-control" rows="3" disabled>{{ post["tags"] }}</textarea>
 		</div>
 	</div>
 	{% endfor %}
