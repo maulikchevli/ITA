@@ -33,9 +33,25 @@ def post():
 		return render_template( 'post.html')
 	else:
 		image = request.files['image']
+		title = request.form['title']
+		username = session['username']
+		tags = request.form['tags']
+
 		if image:
 			filename = secure_filename(image.filename)
-			image.save( os.path.join( app.config['UPLOAD_FOLDER'], filename))
+			image.save( os.path.join(os.path.join( app.config['UPLOAD_FOLDER'], username), filename))
+
+		try:
+			with sql.connect("ensta.db") as con:
+				cur = con.cursor()
+				cur.execute("insert into posts (username, title, filename, tags) values (?,?,?,?)", (username,title,filename,tags))
+				con.commit()
+		except:
+			con.rollback()
+			session['flashErr'] = "Error in sql insertion"
+		finally:
+			con.close()
+			session['flashMsg'] = "Sucess!"
 			return redirect( url_for('index'))
 
 @app.route('/login', methods = ['POST', 'GET'])
@@ -86,7 +102,7 @@ def register():
 			password = passHash.hash(request.form['password'])
 			password2 = request.form['password2']
 			
-# TODO validate passes
+			# TODO validate passes
 			registered = False
 			with sql.connect("ensta.db") as con:
 				con.row_factory = dict_factory
@@ -103,6 +119,9 @@ def register():
 					con.commit()
 					registered = True
 					alreadyUser = False
+
+					# Make folder for images using username
+					os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], username))
 		except:
 			con.rollback()
 			msg = "Error"
