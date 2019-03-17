@@ -19,6 +19,7 @@ def login_required(f):
 	@wraps(f)
 	def fn( *args, **kwargs):
 		if 'username' not in session:
+			session["flashErr"] = "Please login first!"
 			return redirect( url_for('login'))
 		return f( *args, **kwargs)
 	return fn
@@ -51,11 +52,11 @@ def search():
 			users = users.fetchall()
 
 			for user in users:
-				posts = cur.execute('select pid,tags from posts where username LIKE ?', (user['username'],))
+				posts = cur.execute('select pid,title,tags from posts where username LIKE ?', (user['username'],))
 				posts = posts.fetchall()
 				for post in posts:
 					if query in post['tags']:
-						res['posts'].append(post['pid'])
+						res['posts'].append({'pid':post['pid'], 'title':post['title']})
 
 		else:
 			users = cur.execute('select username,firstname,lastname from users');
@@ -67,7 +68,7 @@ def search():
 
 		print( res)
 		con.close()
-		return jsonify(res)
+		return render_template("search.html", result=res)
 
 @app.route('/profile/<username>', methods = ['POST', 'GET'])
 @login_required

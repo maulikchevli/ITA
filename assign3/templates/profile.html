@@ -11,7 +11,7 @@
 	
 	<hr>
 	<dl class="row">
-		<dt class="col-sm-3">username</dt>
+		<dt class="col-sm-3">Username</dt>
 		<dd class="col-sm-9">{{ user["username"] }}</dd>
 
 		<dt class="col-sm-3">Birthdate</dt>
@@ -34,9 +34,11 @@
 				<a href="{{ url_for('blog', pid=post['pid']) }}">{{ post["title"] }}</a>
 			</span>
 
+			{% if session['username'] == post['username'] %}
 			<form method="POST" action="{{ url_for('delete', pid=post['pid']) }}" class="col-sm-3">
 				<input type="submit" value="Delete" class="btn btn-outline-danger">
 			</form>
+			{% endif %}
 		</p>
 
 		<p>By @<a href="{{ url_for('profile', username=post['username']) }}">{{ post["username"] }}</a></p>
@@ -56,6 +58,5 @@
 {% endblock %}
 
 {% block footer %}
-	<p>Byee</p>
 {% endblock %}
 

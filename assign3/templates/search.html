@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}ENSTA Search{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block main %}
+<h1>Ensta Search</h1>
+<div class="container">
+	<div class="col">
+		<ul>
+			{% for post in result['posts'] %}
+			<li><a href="{{ url_for('blog', pid=post['pid']) }}">{{ post['title'] }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+
+	<div class="col">
+		<ul>
+			{% for user in result['users'] %}
+			<li><a href="{{ url_for('profile', username=user) }}">{{ user }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
