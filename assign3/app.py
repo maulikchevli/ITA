@@ -30,7 +30,7 @@ def index():
 @app.route('/search/<query>')
 @login_required
 def search(query):
-	res = []
+	res = {'posts':[], 'users':[]}
 
 	con = sql.connect('ensta.db')
 	con.row_factory = dict_factory
@@ -43,12 +43,12 @@ def search(query):
 		users = users.fetchall()
 
 		for user in users:
-			post = cur.execute('select tags from posts where username=?', (user['username'],))
+			post = cur.execute('select pid,tags from posts where username=?', (user['username'],))
 			post = post.fetchall()
 
 			if post:
 				if query in post[0]['tags']:
-					res.append(user['username'])
+					res['posts'].append(post[0]['pid'])
 
 	else:
 		users = cur.execute('select username,firstname,lastname from users');
@@ -56,12 +56,11 @@ def search(query):
 	
 		for user in users:
 			if query in user.values():
-				res.append(user["username"])
-		print(users)		
-	print( res)
+				res['users'].append(user['username'])
 
+	print( res)
 	con.close()
-	return "hello"
+	return jsonify(res)
 
 @app.route('/post', methods = ['POST', 'GET'])
 def post():
