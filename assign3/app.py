@@ -27,39 +27,47 @@ def login_required(f):
 def index():
 	return render_template( 'index.html')
 
-@app.route('/search/<query>')
+@app.route('/search', methods = ['POST', 'GET'])
 @login_required
-def search(query):
-	res = {'posts':[], 'users':[]}
-
-	con = sql.connect('ensta.db')
-	con.row_factory = dict_factory
-	cur = con.cursor()
-
-	if query[0] == '#':
-		query = query[1:]
-		
-		users = cur.execute('select username from users');
-		users = users.fetchall()
-
-		for user in users:
-			posts = cur.execute('select pid,tags from posts where username=?', (user['username'],))
-			posts = posts.fetchall()
-			for post in posts:
-				if query in post['tags']:
-					res['posts'].append(post['pid'])
+def search():
+	if request.method == "GET":
+		return "HEllO"
 
 	else:
-		users = cur.execute('select username,firstname,lastname from users');
-		users = users.fetchall()
-	
-		for user in users:
-			if query in user.values():
-				res['users'].append(user['username'])
+		res = {'posts':[], 'users':[]}
+		
+		query = request.form["query"]
+		con = sql.connect('ensta.db')
+		con.row_factory = dict_factory
+		cur = con.cursor()
 
-	print( res)
-	con.close()
-	return jsonify(res)
+		if query == "":
+			return
+
+		if query[0] == '#':
+			query = query[1:]
+			
+			users = cur.execute('select username from users');
+			users = users.fetchall()
+
+			for user in users:
+				posts = cur.execute('select pid,tags from posts where username LIKE ?', (user['username'],))
+				posts = posts.fetchall()
+				for post in posts:
+					if query in post['tags']:
+						res['posts'].append(post['pid'])
+
+		else:
+			users = cur.execute('select username,firstname,lastname from users');
+			users = users.fetchall()
+		
+			for user in users:
+				if query in user.values():
+					res['users'].append(user['username'])
+
+		print( res)
+		con.close()
+		return jsonify(res)
 
 @app.route('/profile/<username>', methods = ['POST', 'GET'])
 @login_required
@@ -101,6 +109,23 @@ def post():
 			con.close()
 			session['flashMsg'] = "Sucess!"
 			return redirect( url_for('index'))
+
+@app.route('/delete/<pid>')
+@login_required
+def delete(pid):
+	con = sql.connect('ensta.db')
+	cur = con.cursor()
+	cur.row_factory = dict_factory
+
+	isOwner = cur.execute('select pid from posts where pid=? and username=?', (pid, session["username"]))
+	isOwner = isOwner.fetchall()
+	if isOwner:
+		cur.execute('delete from posts where pid=?', (pid,))
+		con.commit()
+		session["flashMsg"] = "Deleted"
+	else:
+		session["flashErr"] = "Sorry, you dont have the previlage to delete the post"
+	return redirect( url_for('profile', username=session["username"]))	
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
