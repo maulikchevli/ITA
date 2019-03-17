@@ -27,6 +27,42 @@ def login_required(f):
 def index():
 	return render_template( 'index.html')
 
+@app.route('/search/<query>')
+@login_required
+def search(query):
+	res = []
+
+	con = sql.connect('ensta.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	if query[0] == '#':
+		query = query[1:]
+		
+		users = cur.execute('select username from users');
+		users = users.fetchall()
+
+		for user in users:
+			post = cur.execute('select tags from posts where username=?', (user['username'],))
+			post = post.fetchall()
+
+			if post:
+				if query in post[0]['tags']:
+					res.append(user['username'])
+
+	else:
+		users = cur.execute('select username,firstname,lastname from users');
+		users = users.fetchall()
+	
+		for user in users:
+			if query in user.values():
+				res.append(user["username"])
+		print(users)		
+	print( res)
+
+	con.close()
+	return "hello"
+
 @app.route('/post', methods = ['POST', 'GET'])
 def post():
 	if request.method == 'GET':
