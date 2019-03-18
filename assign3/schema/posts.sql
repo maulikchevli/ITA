@@ -4,6 +4,7 @@ CREATE TABLE posts (
 	title text not null,
 	filename text not null,
 	tags text not null,
+	time timestamp default current_timestamp,
 
 	foreign key ('username') references users('username') on delete cascade on update cascade
 );
