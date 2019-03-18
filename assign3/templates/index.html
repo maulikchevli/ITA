@@ -6,6 +6,20 @@
 {% endblock %}
 
 {% block main %}
+
+{% if session["username"] %}
+<div class="container"> <center>
+	<h1 class="display-1">ENSTA</h1>
+	<p> Welcome to Ensta {{ session["username"] }}</p>
+	<hr>
+
+	<p>Post your pictures</p>
+	<p>Make friends and have fun</p>
+	<p>Give us your data :)</p>
+
+</center> </div>
+
+{% else %}
 <div class="container"> <center>
 	<h1>ENSTA</h1>
 
@@ -13,6 +27,8 @@
 
 	<p>Register to access all the good stuff</p>
 </center> </div>
+{% endif %}
+
 {% endblock %}
 
 {% block footer %}

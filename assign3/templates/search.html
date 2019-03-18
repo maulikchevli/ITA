@@ -10,9 +10,9 @@
 <h1>Ensta Search</h1>
 <div class="container">
 	<div class="col">
-		<ul>
+		<ul class="list-group">
 			{% for post in result['posts'] %}
-			<li><a href="{{ url_for('blog', pid=post['pid']) }}">{{ post['title'] }}</a></li>
+			<a href="{{ url_for('blog', pid=post['pid']) }}" class="list-group-item list-group-item-action">{{ post['title'] }}</a>
 			{% endfor %}
 		</ul>
 	</div>
