@@ -30,7 +30,7 @@
 	{% for post in posts %}
 	<hr>
 	<div class="post">
-		<p class="row">
+		<div class="row">
 			<h3 class="col-sm-9">
 				<a href="{{ url_for('blog', pid=post['pid']) }}">{{ post["title"] }}</a>
 			</h3>
@@ -38,14 +38,14 @@
 			<a class="col-sm-3 btn btn-outline-primary" href="{{ url_for('static', filename='uploads/'+post['username']+'/'+post['filename']) }}" download>
 				Download
 			</a>
+		</div>
 
-			{% if session['username'] == post['username'] %}
-			<form method="POST" action="{{ url_for('delete', pid=post['pid']) }}" class="offset-md-9">
-				<input type="submit" value="Delete" class="btn btn-outline-danger">
-			</form>
+		{% if session['username'] == post['username'] %}
+		<form method="POST" action="{{ url_for('delete', pid=post['pid']) }}"> 
+			<input type="submit" value="Delete" class="btn btn-outline-danger">
+		</form>
 
-			{% endif %}
-		</p>
+		{% endif %}
 
 		<p>By @<a href="{{ url_for('profile', username=post['username']) }}">{{ post["username"] }}</a></p>
 
