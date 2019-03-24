@@ -3,6 +3,7 @@ import sqlite3 as sql
 from functools import wraps
 from flask import Flask, render_template, redirect, url_for, session, jsonify, request
 from passlib.apps import custom_app_context as passHash
+import math
 from SQL_execute import dict_factory, GetData
 import analytics
 
@@ -72,20 +73,37 @@ def search():
 		con.close()
 		return render_template("search.html", result=res)
 
-@app.route('/profile/<username>', methods = ['POST', 'GET'])
+@app.route('/profile/<username>', defaults={'page':1})
+@app.route('/profile/<username>/page/<int:page>')
 @login_required
-def profile(username):
+def profile(username, page):
+	PER_PAGE = 3
+
 	con = sql.connect('ensta.db')
 	cur = con.cursor()
 	cur.row_factory = dict_factory
 
+	total_posts = cur.execute('select count(*) as count from posts where username=?',(username,)).fetchone()
+	total_posts = total_posts["count"]
+
+	total_pages = math.ceil(total_posts/PER_PAGE)
+
+	if page < 1:
+		page = 1
+	elif page > total_pages:
+		page = total_pages
+
+	start_at = (page-1)*PER_PAGE
+
 	user = cur.execute('select username,firstName,lastName,email,birthDate,bio from users where username=?', (username,))
 	user = user.fetchone()
-	posts = cur.execute('select * from posts where username=? order by pid desc', (username,))
+	
+	posts = cur.execute('select * from posts where username=? order by pid desc LIMIT ?, ?', (username, start_at, PER_PAGE))
 	posts = posts.fetchall()
 
 	con.close()
-	return render_template('profile.html',user=user, posts=posts)
+	pagination = {"cur_page": page, "total_pages": total_pages}
+	return render_template('profile.html',user=user, posts=posts, pagination=pagination)
 
 @app.route('/blog/<pid>')
 @login_required

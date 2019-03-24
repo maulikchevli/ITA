@@ -66,19 +66,29 @@
 
 	<div class="text-xs-center">
 	  <ul class="pagination">
+
+	  	{% if pagination['cur_page'] != 1 %}
 	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Previous">
-		<span aria-hidden="true">&laquo;</span>
+	      <a class="page-link"
+		     href="{{ url_for('profile', username=user['username'], page=pagination['cur_page'] - 1) }}"
+		     aria-label="Previous">
+			<span aria-hidden="true">&laquo;</span>
 	      </a>
 	    </li>
-	    <li class="page-item"><a class="page-link" href="#">1</a></li>
-	    <li class="page-item"><a class="page-link" href="#">2</a></li>
-	    <li class="page-item"><a class="page-link" href="#">3</a></li>
+		{% endif %}
+
+	    <li class="page-item"><a class="page-link" href="#">{{ pagination["cur_page"] }}</a></li>
+
+		{% if pagination['cur_page'] != pagination['total_pages'] %}
 	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Next">
-		<span aria-hidden="true">&raquo;</span>
+	      <a class="page-link"
+		     href="{{ url_for('profile', username=user['username'], page=pagination['cur_page'] + 1) }}"
+			 aria-label="Next">
+			<span aria-hidden="true">&raquo;</span>
 	      </a>
 	    </li>
+		{% endif %}
+
 	  </ul>
 	  </div>
 </div>
