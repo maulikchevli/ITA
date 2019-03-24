@@ -35,9 +35,13 @@
 				<a href="{{ url_for('blog', pid=post['pid']) }}">{{ post["title"] }}</a>
 			</h3>
 
-			<a class="col-sm-3 btn btn-outline-primary" href="{{ url_for('static', filename='uploads/'+post['username']+'/'+post['filename']) }}" download>
+			<button class="col-sm-3 btn btn-outline-primary" onclick="downloadFile(this, {{ post['pid'] }})">
+				<a id="download"
+				   href="{{ url_for('static', filename='uploads/'+post['username']+'/'+post['filename']) }}" 
+				   download onclick="sendAnalytics.js"
+				   disabled></a>
 				Download
-			</a>
+			</button>
 		</div>
 
 		{% if session['username'] == post['username'] %}
@@ -82,5 +86,6 @@
 {% endblock %}
 
 {% block footer %}
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
 {% endblock %}
 

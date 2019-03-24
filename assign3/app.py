@@ -4,6 +4,7 @@ from functools import wraps
 from flask import Flask, render_template, redirect, url_for, session, jsonify, request
 from passlib.apps import custom_app_context as passHash
 from SQL_execute import dict_factory, GetData
+import analytics
 
 from werkzeug.utils import secure_filename
 
@@ -56,6 +57,7 @@ def search():
 				posts = posts.fetchall()
 				for post in posts:
 					if query in post['tags']:
+						analytics.update_hashtag(query)
 						res['posts'].append({'pid':post['pid'], 'title':post['title']})
 
 		else:
@@ -228,6 +230,12 @@ def logout():
 	# remove user from session
 	session.pop('username',None)
 	return redirect( url_for('index'))
+
+@app.route('/analytics/file', methods=["POST"])
+def update_file_analytics():
+	file_id = request.form['file_id']
+	analytics.update_downloads(file_id)
+	return jsonify({"res":"true"})
 
 if __name__ == "__main__":
 	app.run( debug=True)

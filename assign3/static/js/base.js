@@ -25,3 +25,8 @@ function suggest(input) {
 		}
 	});
 }
+
+function downloadFile(fileDiv, fileId) {
+	sendAnalytics(fileId);
+	fileDiv.querySelector("#download").click();
+}
