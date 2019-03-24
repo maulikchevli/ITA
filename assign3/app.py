@@ -73,37 +73,95 @@ def search():
 		con.close()
 		return render_template("search.html", result=res)
 
-@app.route('/profile/<username>', defaults={'page':1})
-@app.route('/profile/<username>/page/<int:page>')
+@app.route('/profile/<username>', defaults={'page':1, 'filterAtt':[]})
+@app.route('/profile/<username>/page/<int:page>', defaults={'filterAtt':[]})
+@app.route('/profile/<username>/page/<int:page>/filter/<filterAtt>')
+@app.route('/profile/<username>/filter/<filterAtt>', defaults={'page':1})
 @login_required
-def profile(username, page):
-	PER_PAGE = 3
+def profile(username, page, filterAtt):
+	PER_PAGE = 2
 
-	con = sql.connect('ensta.db')
-	cur = con.cursor()
-	cur.row_factory = dict_factory
+	if not filterAtt:
+		con = sql.connect('ensta.db')
+		cur = con.cursor()
+		cur.row_factory = sql.Row
 
-	total_posts = cur.execute('select count(*) as count from posts where username=?',(username,)).fetchone()
-	total_posts = total_posts["count"]
+		total_posts = cur.execute('select count(*) as count from posts where username=?',(username,)).fetchone()
+		total_posts = total_posts["count"]
 
-	total_pages = math.ceil(total_posts/PER_PAGE)
+		total_pages = math.ceil(total_posts/PER_PAGE)
 
-	if page < 1:
-		page = 1
-	elif page > total_pages:
-		page = total_pages
+		if page < 1:
+			page = 1
+		elif page > total_pages:
+			page = total_pages
 
-	start_at = (page-1)*PER_PAGE
+		start_at = (page-1)*PER_PAGE
 
-	user = cur.execute('select username,firstName,lastName,email,birthDate,bio from users where username=?', (username,))
-	user = user.fetchone()
+		user = cur.execute('select username,firstName,lastName,email,birthDate,bio from users where username=?', (username,))
+		user = user.fetchone()
+		
+		posts = cur.execute('select * from posts where username=? order by pid desc LIMIT ?, ?', (username, start_at, PER_PAGE))
+		posts = posts.fetchall()
+
+	else:
+		filter = filterAtt.split(',')
+		if filter[0] == 'time':
+			time_from = filter[1]
+			time_to = filter[2]
+
+			con = sql.connect('ensta.db')
+			cur = con.cursor()
+			cur.row_factory = dict_factory
+
+			total_posts = cur.execute('select count(*) as count from posts where username=?',(username,)).fetchone()
+			total_posts = total_posts["count"]
+
+			total_pages = math.ceil(total_posts/PER_PAGE)
+
+			if page < 1:
+				page = 1
+			elif page > total_pages:
+				page = total_pages
+
+			start_at = (page-1)*PER_PAGE
+
+			user = cur.execute('select username,firstName,lastName,email,birthDate,bio from users where username=?', (username,))
+			user = user.fetchone()
+			
+			posts = cur.execute('select * from posts where username=? order by pid desc LIMIT ?, ?', (username, start_at, PER_PAGE))
+			posts = posts.fetchall()
+
+		elif filter[0] == 'hashtag':
+			tag = filter[1]
+
+			con = sql.connect('ensta.db')
+			cur = con.cursor()
+			cur.row_factory = dict_factory
+
+			total_posts = cur.execute('select count(*) as count from posts where username=? and tags LIKE ?',(username, '%'+tag+'%')).fetchone()
+			total_posts = total_posts["count"]
+
+			total_pages = math.ceil(total_posts/PER_PAGE)
+
+			if page < 1:
+				page = 1
+			elif page > total_pages:
+				page = total_pages
+
+			start_at = (page-1)*PER_PAGE
+
+			user = cur.execute('select username,firstName,lastName,email,birthDate,bio from users where username=?', (username,))
+			user = user.fetchone()
+			
+			posts = cur.execute('select * from posts where username=? and tags LIKE ? order by pid desc LIMIT ?, ?', (username, '%'+tag+'%', start_at, PER_PAGE))
+			posts = posts.fetchall()
 	
-	posts = cur.execute('select * from posts where username=? order by pid desc LIMIT ?, ?', (username, start_at, PER_PAGE))
-	posts = posts.fetchall()
 
+	# finally
 	con.close()
 	pagination = {"cur_page": page, "total_pages": total_pages}
-	return render_template('profile.html',user=user, posts=posts, pagination=pagination)
+	return render_template('profile.html',user=user, posts=posts, pagination=pagination, filterAtt=filterAtt)
 
 @app.route('/blog/<pid>')
 @login_required
