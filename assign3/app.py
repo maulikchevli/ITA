@@ -317,6 +317,22 @@ def update_file_analytics():
 	analytics.update_downloads(file_id)
 	return jsonify({"res":"true"})
 
+@app.route('/analytics')
+def view_analytics():
+	con = sql.connect('analytics.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	tags = cur.execute('select * from tags');
+	tags = tags.fetchall()
+
+	cur.execute('attach "ensta.db" as ensta')
+	downloads = cur.execute('select file_id, count, ensta.posts.username as owner, ensta.posts.filename as filename, ensta.posts.title as title from downloads inner join ensta.posts where file_id=ensta.posts.pid');
+	downloads = downloads.fetchall()
+	print(downloads)
+
+	return render_template('analytics.html', tags=tags, downloads=downloads)
+
 if __name__ == "__main__":
 	app.run( debug=True)
 

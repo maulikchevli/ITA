@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block main %}
+<h1>Hashtags</h1>
+
+<table class="table table-responsive-lg table-bordered table-hover table-striped">
+<thead>
+	<tr>
+		<th>Hashtag</th>
+		<th>Count</th>
+	</tr>
+</thead>
+
+<tbody>
+	{% for tag in tags %}
+	<tr>
+		<td>{{ tag['tag'] }}</td>
+		<td>{{ tag['count'] }}</td>
+	</tr>
+	{% endfor %}
+</tbody>
+</table>
+
+<hr>
+
+<h1>File downloads</h1>
+<table class="table table-responsive-lg table-bordered table-hover table-striped">
+<thead>
+	<tr>
+		<th>File ID</th>
+		<th>File Owner</th>
+		<th>FIle name</th>
+		<th>Post Title</th>
+		<th>Count</th>
+	</tr>
+</thead>
+
+<tbody>
+	{% for file in downloads %}
+	<tr>
+		<td>{{ file['file_id'] }}</td>
+		<td>{{ file['owner'] }}</td>
+		<td>{{ file['filename'] }}</td>
+		<td>{{ file['title'] }}</td>
+		<td>{{ file['count'] }}</td>
+	</tr>
+	{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
