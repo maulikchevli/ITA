@@ -107,15 +107,20 @@ def profile(username, page, filterAtt):
 	else:
 		filter = filterAtt.split(',')
 		if filter[0] == 'time':
-			time_from = filter[1]
-			time_to = filter[2]
+			time_from = filter[1] + " 00:00:00"
+			time_to = filter[2] + " 00:00:00"
+
+			print(time_from)
+			print(time_to)
 
 			con = sql.connect('ensta.db')
 			cur = con.cursor()
 			cur.row_factory = dict_factory
 
-			total_posts = cur.execute('select count(*) as count from posts where username=?',(username,)).fetchone()
+			total_posts = cur.execute('select count(*) as count from posts where username=? and time >= ? and time <= ?',(username, time_from, time_to)).fetchone()
 			total_posts = total_posts["count"]
+
+			print(total_posts)
 
 			total_pages = math.ceil(total_posts/PER_PAGE)
 
@@ -129,7 +134,7 @@ def profile(username, page, filterAtt):
 			user = cur.execute('select username,firstName,lastName,email,birthDate,bio from users where username=?', (username,))
 			user = user.fetchone()
 			
-			posts = cur.execute('select * from posts where username=? order by pid desc LIMIT ?, ?', (username, start_at, PER_PAGE))
+			posts = cur.execute('select * from posts where username=? and time >= ? and time <= ? order by pid desc LIMIT ?, ?', (username, time_from, time_to, start_at, PER_PAGE))
 			posts = posts.fetchall()
 
 		elif filter[0] == 'hashtag':
