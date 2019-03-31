@@ -27,7 +27,7 @@ def update_downloads(file_id):
 	file_row = cur.execute('select * from downloads where file_id=?', (file_id,))
 	file_row = file_row.fetchone()
 
-	if file_row:
+	if file_row is not None:
 		file_cnt = file_row['count'] + 1
 		cur.execute('update downloads set count=? where file_id=?', (file_cnt, file_id))
 		con.commit()

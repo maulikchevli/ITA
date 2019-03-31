@@ -58,7 +58,6 @@ def search():
 				posts = posts.fetchall()
 				for post in posts:
 					if query in post['tags']:
-						analytics.update_hashtag(query)
 						res['posts'].append({'pid':post['pid'], 'title':post['title']})
 
 		else:
@@ -70,6 +69,8 @@ def search():
 					res['users'].append(user['username'])
 
 		print( res)
+		if res:
+			analytics.update_hashtag(query)
 		con.close()
 		return render_template("search.html", result=res)
 
@@ -119,8 +120,6 @@ def profile(username, page, filterAtt):
 
 			total_posts = cur.execute('select count(*) as count from posts where username=? and time >= ? and time <= ?',(username, time_from, time_to)).fetchone()
 			total_posts = total_posts["count"]
-
-			print(total_posts)
 
 			total_pages = math.ceil(total_posts/PER_PAGE)
 

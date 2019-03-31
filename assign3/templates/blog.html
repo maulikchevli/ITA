@@ -13,12 +13,12 @@
 			</h3>
 
 			<button class="col-sm-3 btn btn-outline-primary" onclick="downloadFile(this, {{ post['pid'] }})">
-				<a id="download"
-				   href="{{ url_for('static', filename='uploads/'+post['username']+'/'+post['filename']) }}" 
-				   download onclick="sendAnalytics.js"
-				   disabled></a>
 				Download
 			</button>
+			<a id="download_{{ post['pid'] }}"
+			   href="{{ url_for('static', filename='uploads/'+post['username']+'/'+post['filename']) }}" 
+			   download
+			   disabled></a>
 		</div>
 
 		{% if session['username'] == post['username'] %}
