@@ -7,12 +7,23 @@
 
 {% block main %}
 <div class="container">
-	<h1>{{ user["firstName"] }} {{ user["lastName"] }}</h1>
+	<div class="row">
+		<h1 class="col-sm-8">{{ user["firstName"] }} {{ user["lastName"] }}</h1>
+		
+		<select class="col-sm-1 custom-select" onclick="filterValues()" id="filterSelect">
+			<option selected>Filters</option>
+			<option value="hashtag">Hashtag</option>
+			<option value="time">Time</option>
+		</select>
+
+		<div class="col-sm-3" id="filter">
+		</div>
+	</div>
 	
 	<hr>
 	<dl class="row">
 		<dt class="col-sm-3">Username</dt>
-		<dd class="col-sm-9">{{ user["username"] }}</dd>
+		<dd class="col-sm-9" id="username">{{ user["username"] }}</dd>
 
 		<dt class="col-sm-3">Birthdate</dt>
 		<dd class="col-sm-9">{{ user["birthDate"] }}</dd>
@@ -97,5 +108,6 @@
 
 {% block footer %}
 <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+<script src="{{ url_for('static', filename='js/filter.js') }}"></script>
 {% endblock %}
 
