@@ -60,6 +60,9 @@ def search():
 					if query in post['tags']:
 						res['posts'].append({'pid':post['pid'], 'title':post['title']})
 
+			if res:
+				analytics.update_hashtag(query)
+
 		else:
 			users = cur.execute('select username,firstname,lastname from users');
 			users = users.fetchall()
@@ -69,8 +72,6 @@ def search():
 					res['users'].append(user['username'])
 
 		print( res)
-		if res:
-			analytics.update_hashtag(query)
 		con.close()
 		return render_template("search.html", result=res)
 
