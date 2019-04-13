@@ -4,15 +4,8 @@ from flask import Flask, render_template, redirect, url_for, session, jsonify, r
 from passlib.apps import custom_app_context as passHash
 from SQL_execute import dict_factory, GetData
 
-from werkzeug.utils import secure_filename
-
-UPLOAD_FOLDER = './static/uploads'
-ALLOWED_EXTENSIONS = set(['jpg','jpeg','gif'])
-
 app = Flask( __name__)
-app.secret_key = 'ensta'
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = 'groceri'
 
 def login_required(f):
 	@wraps(f)
@@ -26,6 +19,28 @@ def login_required(f):
 def index():
 	return render_template( 'index.html')
 
+@app.route('/products')
+def get_products():
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	products = con.execute('select * from products')
+	products = products.fetchall();
+
+	return jsonify(products)
+
+@app.route('/product/<pid>')
+def product_info(pid):
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	product = con.execute('select * from products where pid=?', (pid,))
+	product = product.fetchone();
+
+	return jsonify(product)
+
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
 	if request.method == 'GET':
@@ -35,11 +50,11 @@ def login():
 			enteredPassword = request.form['password']
 			username = request.form['username']
 
-			con = sql.connect('ensta.db')
+			con = sql.connect('groceri.db')
 			con.row_factory = sql.Row
 
 			cur = con.cursor()
-			data = cur.execute('SELECT * FROM users WHERE username=?',(username,))
+			data = cur.execute('SELECT * FROM user_info WHERE username=?',(username,))
 			data = data.fetchall()
 
 			storedPassword = data[0]['password'] #Throws IndexError if no entry is found
@@ -65,29 +80,25 @@ def register():
 		return render_template( 'register.html')
 	else:
 		try:
-			firstName = request.form['firstName']
-			lastName = request.form['lastName']
 			username = request.form['username']
 			email = request.form['email']
-			birthDate = request.form['birthDate']
-			bio = request.form['bio']
 			password = passHash.hash(request.form['password'])
 			password2 = request.form['password2']
 			
-# TODO validate passes
+			# TODO validate passes
 			registered = False
-			with sql.connect("ensta.db") as con:
+			with sql.connect("groceri.db") as con:
 				con.row_factory = dict_factory
 				cur = con.cursor()
 
-				cur.execute("SELECT * from users where username=? OR email=?",(username,email))
+				cur.execute("SELECT * from user_info where username=? OR email=?",(username,email))
 				users = cur.fetchall()
 				if users:
 					print("already!")
 					registered = False
 					alreadyUser = True
 				else:
-					cur.execute("insert into users (firstName,lastName,username,birthDate,bio,email,password) values (?,?,?,?,?,?,?)", (firstName,lastName,username,birthDate,bio,email,password))
+					cur.execute("insert into user_info (username,email,password) values (?,?,?)", (username,email,password))
 					con.commit()
 					registered = True
 					alreadyUser = False

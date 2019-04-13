@@ -1,0 +1,9 @@
+create table products (
+	pid integer primary key,
+	name text not null,
+	info text,
+	price float not null,
+	p_type text,
+	img_path text not null
+);
+

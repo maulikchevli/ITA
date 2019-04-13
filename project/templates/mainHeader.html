@@ -13,13 +13,12 @@
 				{% if session.username %}
 				<li class="nav-item dropdown btn-group">
 					<a class="nav-link btn btn-outline-info"
-					   href="">{% print session.username %}
+					   href="">{{ session["username"] }}
 					</a>
 
 					<a class="btn btn-outline-info nav-link dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></a>
 					
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-					<a class="dropdown-item" href="{{ url_for('post') }}">Post Blog</a>
 					<a class="dropdown-item" href="">Notification Log</a>
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" href="{{ url_for('logout') }}">Log Out</a>
