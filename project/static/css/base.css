@@ -1,0 +1,29 @@
+html {
+	height: 100%;
+}
+
+body {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	background-color: rgba(231, 253, 198,0.7);
+}
+
+main {
+	flex: 1 0 auto;
+}
+
+header {
+	background-color: rgb(231, 253, 198);
+}
+
+footer {
+	flex-shrink: 0;
+	background-color: rgb(231,253,198);
+}
+
+.flash-message {
+	position: absolute;
+	right: 0px;
+	top: 50px;
+}
