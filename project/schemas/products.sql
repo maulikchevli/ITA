@@ -1,5 +1,5 @@
 create table products (
-	pid integer primary key,
+	pid integer primary key autoincrement,
 	name text not null,
 	info text,
 	price float not null,

@@ -18,7 +18,8 @@ def login_required(f):
 def admin_required(f):
 	@wraps(f)
 	def fn( *args, **kwargs):
-		if session['user_type'] is not "admin":
+		print(session['user_type'])
+		if session['user_type'] != "admin":
 			session['flashErr'] = "You are not admin"
 			return redirect( url_for('index'))
 		return f( *args, **kwargs)
@@ -204,6 +205,33 @@ def logout():
 	session.pop('username',None)
 	session.pop('user_type',None)
 	return redirect( url_for('index'))
+
+@app.route('/admin')
+@login_required
+@admin_required
+def admin():
+	return "Hello admin"
+
+@app.route('/admin/product/add')
+@login_required
+@admin_required
+def add_product():
+	name = request.args["name"]
+	info = request.args["info"]
+	price = request.args["price"]
+	p_type = request.args["p_type"]
+	img_path = "product_img/" + request.args["img_path"]
+
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	con.execute('insert into products (name,info,price,p_type,img_path) values (?,?,?,?,?)',(name,info,price,p_type,img_path))
+	con.commit()
+
+	con.close()
+
+	return redirect(url_for('get_products'))
 
 if __name__ == "__main__":
 	app.run( debug=True)
