@@ -15,6 +15,15 @@ def login_required(f):
 		return f( *args, **kwargs)
 	return fn
 
+def admin_required(f):
+	@wraps(f)
+	def fn( *args, **kwargs):
+		if session['user_type'] is not "admin":
+			session['flashErr'] = "You are not admin"
+			return redirect( url_for('index'))
+		return f( *args, **kwargs)
+	return fn
+
 @app.route('/')
 def index():
 	return render_template( 'index.html')
@@ -70,6 +79,51 @@ def search():
 
 	return jsonify(result)
 
+@app.route('/cart/add')
+def add_to_cart():
+	username = request.args["username"]
+	pid = request.args["pid"]
+	quantity = int(request.args["quantity"])
+	price = request.args["price"]
+
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	entry = con.execute('select * from cart where username=? and pid=?',(username,pid))
+	entry = entry.fetchone()
+
+	if entry is None:
+		con.execute('insert into cart (username,pid,quantity,price) values (?,?,?,?)',(username, pid,quantity, price))
+		pass
+	else:
+		print(quantity)
+		print(entry["quantity"])
+		quantity += entry["quantity"]
+		con.execute('update cart set quantity=? where username=? and pid=?',(quantity,username,pid))
+
+
+	con.commit()
+	con.close()
+
+	return "success"
+
+@app.route('/cart/show')
+@login_required
+def show_cart():
+	username = session["username"]
+
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	items = con.execute('select * from cart where username=?',(username,))
+	items = items.fetchall();
+
+	con.close()
+
+	return jsonify(items)
+
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
 	if request.method == 'GET':
@@ -92,6 +146,7 @@ def login():
 
 			if passHash.verify(enteredPassword,storedPassword):
 				session['username'] = username
+				session['user_type'] = data[0]['user_type']
 				return redirect(url_for('index'))
 
 			else:
@@ -147,6 +202,7 @@ def register():
 def logout():
 	# remove user from session
 	session.pop('username',None)
+	session.pop('user_type',None)
 	return redirect( url_for('index'))
 
 if __name__ == "__main__":
