@@ -28,6 +28,8 @@ def get_products():
 	products = con.execute('select * from products')
 	products = products.fetchall();
 
+	con.close()
+
 	return jsonify(products)
 
 @app.route('/product/<pid>')
@@ -39,7 +41,34 @@ def product_info(pid):
 	product = con.execute('select * from products where pid=?', (pid,))
 	product = product.fetchone();
 
+	con.close()
+
 	return jsonify(product)
+
+@app.route('/search')
+def search():
+	# the result of search
+	result = {}
+
+	q = request.args["q"]
+
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	search_result = con.execute('select * from products where name LIKE ?', ('%'+q+'%',))
+	search_result = search_result.fetchall()
+	result["name"] = search_result;
+
+	if 'type' in request.args:
+		type = request.args["type"]
+
+		search_result = con.execute('select * from products where name LIKE ? and p_type LIKE ?', ('%'+q+'%','%'+type+'%'))
+		search_result = search_result.fetchall()
+
+		result["type"] = search_result;
+
+	return jsonify(result)
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
