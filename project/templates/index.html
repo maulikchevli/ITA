@@ -6,7 +6,21 @@
 {% endblock %}
 
 {% block main %}
-	<p>Hei there. this is main block </p>
+	<div class="container border">
+		<div class="row" style="display:flex;justify-content:center;align-items:center;min-height:100vh">
+			<div class="col border m-3">
+				<h1 class="display-2"><a href="{{ url_for('product_type',p_type='fruit') }}">Fruits</a></h1>
+			</div>
+
+			<div class="col border m-3">
+				<h1 class="display-2"><a href="{{ url_for('product_type',p_type='misc') }}">Misc.</a></h1>
+			</div>
+
+			<div class="col border m-3">
+				<h1 class="display-2"><a href="{{ url_for('product_type',p_type='vegetable') }}">Vegetables</a></h1>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
 {% block footer %}

@@ -51,18 +51,18 @@ def get_products():
 
 	return render_template('products.html',products=products)
 
-@app.route('/product/<pid>')
-def product_info(pid):
+@app.route('/product/<p_type>')
+def product_type(p_type):
 	con = sql.connect('groceri.db')
 	con.row_factory = dict_factory
 	cur = con.cursor()
 
-	product = con.execute('select * from products where pid=?', (pid,))
-	product = product.fetchone();
+	products = con.execute('select * from products where p_type=?', (p_type,))
+	products = products.fetchall();
 
 	con.close()
 
-	return jsonify(product)
+	return render_template('products.html', products=products)
 
 @app.route('/search')
 def search():
