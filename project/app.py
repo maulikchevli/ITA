@@ -5,6 +5,7 @@ from flask import Flask, render_template, redirect, url_for, session, jsonify, r
 from passlib.apps import custom_app_context as passHash
 from SQL_execute import dict_factory, GetData
 
+import ast
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = './static/product_img'
@@ -215,7 +216,8 @@ def buy_cart():
 
 	con.close()
 
-	return str(order_dict)
+	session["flashMsg"] = "Your Order has been placed. It will be recevied by the admins shortly"
+	return redirect(url_for('show_order_history'))
 
 @app.route('/order_history')
 @login_required
@@ -227,9 +229,17 @@ def show_order_history():
 	orders = con.execute('select * from order_history where username=?',(session["username"],))
 	orders = orders.fetchall();
 
-	con.close()
 
-	return jsonify(orders)
+	for order in orders:
+		order['order_dict'] = eval(order['order_dict'])
+		for product in order['order_dict']['products']:
+			info = con.execute('select * from products where pid=?',(product['pid'],)).fetchone()
+			product.update(info)
+
+	print(orders)
+
+	con.close()
+	return render_template('order_history.html', orders=orders)
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
