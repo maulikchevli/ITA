@@ -59,26 +59,58 @@ def product_info(pid):
 def search():
 	# the result of search
 	result = {}
+	result["name"] = {}
+	result["type"] = {}
+	relop = None
+	p_type = None
 
 	q = request.args["q"]
+
+	q = q.split(" ")
+
+	print(len(q))
+
+	if len(q) == 2:
+		relop = q[1].split(":")[1]
+		print(relop)
+	elif len(q) == 3:
+		relop = q[1].split(":")[1]
+		p_type = q[2].split(":")[1]
+		print(relop)
+		print(p_type)
+
+	q = q[0]
 
 	con = sql.connect('groceri.db')
 	con.row_factory = dict_factory
 	cur = con.cursor()
 
-	search_result = con.execute('select * from products where name LIKE ?', ('%'+q+'%',))
-	search_result = search_result.fetchall()
-	result["name"] = search_result;
-
-	if 'type' in request.args:
-		type = request.args["type"]
-
-		search_result = con.execute('select * from products where name LIKE ? and p_type LIKE ?', ('%'+q+'%','%'+type+'%'))
+	if relop == "not":
+		search_result = con.execute('select * from products where name not like ?', ('%'+q+'%',))
 		search_result = search_result.fetchall()
+		result["name"] = search_result
 
-		result["type"] = search_result;
+	elif relop == "and":
+		if p_type is None:
+			pass
+		else:
+			search_result = con.execute('select * from products where name LIKE ? and p_type LIKE ?', ('%'+q+'%','%'+p_type+'%'))
+			search_result = search_result.fetchall()
+			result["name"] =  search_result
 
-	return jsonify(result)
+	elif relop == "or":
+		if p_type is None:
+			pass
+		else:
+			search_result = con.execute('select * from products where name like ?', ('%'+q+'%',))
+			search_result = search_result.fetchall()
+			result["name"] = search_result
+
+			search_result = con.execute('select * from products where p_type like ?', ('%'+p_type+'%',))
+			search_result = search_result.fetchall()
+			result["type"] = search_result
+
+	return render_template('search.html',result=result)
 
 @app.route('/cart/add', methods=["GET","POST"])
 def add_to_cart():

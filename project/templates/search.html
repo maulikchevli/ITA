@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Groceri - search{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block main %}
+	<h1>Groceri Search</h1>
+
+	<div class="container">
+	<div class="row">
+		{% if 'name' in result %}
+		<ul class="col">
+			<h3>Name</h3>
+			{% for name in result['name'] %}
+			<li>{{ name["name"] }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+
+		{% if 'type' in result %}
+		<ul class="col">
+			<h3>Type</h3>
+			{% for type in result['type'] %}
+			<li>{{ type["p_type"] }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+	</div>
+	</div>
+
+	<div class="container">
+		<p>Advanced Search</p>
+		<p>options to add to search:</p>
+		<ul>
+			<li>Search by type: type</li>
+			<li>Query relop: and/or/not</li>
+		</ul>
+
+		<p>Example query: <code>tom relop:and type:food</code></p>
+		<p>Not query: <code>tom relop:not</code>
+	</div>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
