@@ -11,7 +11,7 @@
 	<h1>My Cart</h1>
 
 	<div class="container">
-		{% for product in products %}
+		{% for product in products['list'] %}
 		<div class="container">
 			<div class="row">
 				<p>{{ product["name"] }}</p>
@@ -26,10 +26,19 @@
 
 				<div class="col-sm-2">
 					<p>Quantity: {{ product["quantity"] }}<p>
+					<form method="post" action="{{ url_for('remove_cart') }}">
+						<input style="display:none;" name="c_id" value="{{ product["c_id"] }}">
+						<button type="submit" class="btn btn-outline-danger">Remove from cart</button>
+					</form>
 				</div>
 			</div>
 		</div>
 		{% endfor %}
+	</div>
+
+	<hr>
+	<div class="container">
+		<p>Total: {{ products['total_cost'] }}</p>
 	</div>
 
 {% endblock %}

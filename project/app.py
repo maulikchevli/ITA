@@ -136,7 +136,24 @@ def add_to_cart():
 	con.commit()
 	con.close()
 
-	return "success"
+	return redirect(url_for('show_cart'))
+
+@app.route('/cart/remove', methods=["GET","POST"])
+@login_required
+def remove_cart():
+	c_id = request.form["c_id"]
+
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	con.execute('delete from cart where c_id=?',(c_id,))
+	con.commit()
+	con.close()
+
+	session["flashMsg"] = "Deleted successfully"
+
+	return redirect(url_for('show_cart'))
 
 @app.route('/cart/show')
 @login_required
@@ -149,6 +166,15 @@ def show_cart():
 
 	products = con.execute('select * from cart,products where username=? and cart.pid=products.pid',(username,))
 	products = products.fetchall();
+
+	total_cost = 0
+	for product in products:
+		total_cost += product['price']*product['quantity']
+	
+	tmp = products
+	products = {}
+	products["list"] = tmp
+	products["total_cost"] = total_cost
 
 	con.close()
 	print(products)

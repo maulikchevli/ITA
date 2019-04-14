@@ -15,6 +15,10 @@
 
 		<ul class="navbar-nav ml-auto">
 				{% if session.username %}
+				<li class="nav-item">
+					<a class="nav-link btn btn-outline-secondary" href="{{ url_for('get_products') }}">Products</a>
+				</li>
+
 				<li class="nav-item dropdown btn-group">
 					<a class="nav-link btn btn-outline-info"
 					   href="">{{ session["username"] }}
