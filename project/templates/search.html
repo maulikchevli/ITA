@@ -13,10 +13,12 @@
 	<div class="container">
 	<div class="row">
 		{% if 'name' in result %}
-		<ul class="col">
+		<ul class="col list-group">
 			<h3>Name</h3>
 			{% for name in result['name'] %}
-			<li>{{ name["name"] }}</li>
+			<a class="list-group-item list-group-item-action" href="{{ url_for('product_by_pid',pid=name['pid']) }}">
+				{{ name["name"] }}
+			</a>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -25,7 +27,9 @@
 		<ul class="col">
 			<h3>Type</h3>
 			{% for type in result['type'] %}
-			<li>{{ type["p_type"] }}</li>
+			<a class="list-group-item list-group-item-action" href="{{ url_for('product_by_pid',pid=type['pid']) }}">
+				{{ type["name"] }}
+			</a>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -41,7 +45,7 @@
 			<li>Query relop: and/or/not</li>
 		</ul>
 
-		<p>Example query: <code>tom relop:and type:food</code></p>
+		<p>Example query: <code>tom relop:and type:misc</code></p>
 		<p>Not query: <code>tom relop:not</code>
 	</div>
 
