@@ -37,8 +37,11 @@
 	</div>
 
 	<hr>
-	<div class="container">
-		<p>Total: {{ products['total_cost'] }}</p>
+	<div class="row">
+		<p class="col">Total: {{ products['total_cost'] }}</p>
+		<form method="post" action="{{ url_for('buy_cart') }}">
+			<button class="btn btn-outline-success" type="submit">Checkout order</button>
+		</form>
 	</div>
 
 {% endblock %}

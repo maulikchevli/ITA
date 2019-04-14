@@ -181,6 +181,43 @@ def show_cart():
 
 	return render_template('cart.html',products=products)
 
+@app.route('/cart/buy', methods=["GET","POST"])
+@login_required
+def buy_cart():
+	username = session["username"]
+
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	products = con.execute('select pid,quantity from cart where username=?',(username,))
+	products = products.fetchall();
+
+	order_dict = {}
+	order_dict["products"] = products
+
+	con.execute('delete from cart where username=?',(username,))
+	con.execute('insert into order_history (username,order_dict) values (?,?)',(username,str(order_dict)))
+	con.commit()
+
+	con.close()
+
+	return str(order_dict)
+
+@app.route('/order_history')
+@login_required
+def show_order_history():
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	orders = con.execute('select * from order_history where username=?',(session["username"],))
+	orders = orders.fetchall();
+
+	con.close()
+
+	return jsonify(orders)
+
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
 	if request.method == 'GET':
