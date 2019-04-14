@@ -4,6 +4,7 @@ create table products (
 	info text,
 	price float not null,
 	p_type text,
-	img_path text not null
+	img_path text not null,
+	to_delete boolean default false
 );
 

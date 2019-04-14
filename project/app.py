@@ -1,11 +1,19 @@
+import os
 import sqlite3 as sql
 from functools import wraps
 from flask import Flask, render_template, redirect, url_for, session, jsonify, request
 from passlib.apps import custom_app_context as passHash
 from SQL_execute import dict_factory, GetData
 
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = './static/product_img'
+ALLOWED_EXTENSIONS = set(['jpg','jpeg','gif'])
+
 app = Flask( __name__)
 app.secret_key = 'groceri'
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def login_required(f):
 	@wraps(f)
@@ -109,6 +117,11 @@ def search():
 			search_result = con.execute('select * from products where p_type like ?', ('%'+p_type+'%',))
 			search_result = search_result.fetchall()
 			result["type"] = search_result
+
+	elif relop is None:
+		search_result = con.execute('select * from products where name like ?', ('%'+q+'%',))
+		search_result = search_result.fetchall()
+		result["name"] = search_result
 
 	return render_template('search.html',result=result)
 
@@ -305,25 +318,59 @@ def logout():
 def admin():
 	return "Hello admin"
 
-@app.route('/admin/product/add')
+@app.route('/admin/product/add', methods=["GET","POST"])
 @login_required
 @admin_required
 def add_product():
-	name = request.args["name"]
-	info = request.args["info"]
-	price = request.args["price"]
-	p_type = request.args["p_type"]
-	img_path = "product_img/" + request.args["img_path"]
+	if request.method == "GET":
+		return render_template('admin_add.html')
+	else:
+		name = request.form["name"]
+		info = request.form["info"]
+		price = request.form["price"]
+		p_type = request.form["p_type"]
+		image = request.files["image"]
+
+		if image:
+			filename = secure_filename(image.filename)
+			img_path = "product_img/" + filename
+			image.save(os.path.join( app.config['UPLOAD_FOLDER'], filename))
+
+		con = sql.connect('groceri.db')
+		con.row_factory = dict_factory
+		cur = con.cursor()
+
+		con.execute('insert into products (name,info,price,p_type,img_path) values (?,?,?,?,?)',(name,info,price,p_type,img_path))
+		con.commit()
+
+		con.close()
+
+		return redirect(url_for('get_products'))
+
+@app.route('/admin/product/unlink', methods=["GET","POST"])
+def unlink_product():
+	pid = request.form["pid"]
 
 	con = sql.connect('groceri.db')
 	con.row_factory = dict_factory
 	cur = con.cursor()
 
-	con.execute('insert into products (name,info,price,p_type,img_path) values (?,?,?,?,?)',(name,info,price,p_type,img_path))
+	con.execute('update products set to_delete=1 where pid=?',(pid,))
 	con.commit()
-
 	con.close()
+	return redirect(url_for('get_products'))
 
+@app.route('/admin/product/link', methods=["GET","POST"])
+def link_product():
+	pid = request.form["pid"]
+
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	con.execute('update products set to_delete=0 where pid=?',(pid,))
+	con.commit()
+	con.close()
 	return redirect(url_for('get_products'))
 
 if __name__ == "__main__":

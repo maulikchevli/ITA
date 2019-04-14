@@ -29,6 +29,10 @@
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 					<a class="dropdown-item" href="{{ url_for('show_cart') }}">Show Cart</a>
 					<a class="dropdown-item" href="{{ url_for('show_order_history') }}">Order History</a>
+
+					{% if session["user_type"] == "admin" %}
+					<a class="dropdown-item" href="{{ url_for('add_product') }}">Add product</a>
+					{% endif %}
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" href="{{ url_for('logout') }}">Log Out</a>
 				</div>
