@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - orders{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block main %}
+	<h1>Orders</h1>
+
+	{% for order in orders %}
+	<div class="container">
+		<div class="row">
+			<h3 class="col">Order id: {{ order['o_id'] }}</h3> 
+			<span class="col">Timestamp: {{ order["time"] }}</span>
+			<form method="post" action="{{ url_for('accept_order') }}">
+				<input style="display:none;" value="{{ order["o_id"] }}" name="o_id">
+				<button class="btn btn-success" type="submit">Accept</button>
+			</form>
+		</div>
+		{% for product in order['order_dict']['products'] %}
+		<div class="container">
+			<div class="row">
+				<p>{{ product["name"] }}</p>
+			</div>
+
+			<div class="row">
+				<img class="img-thumbnail col-sm-4" src="{{ url_for('static', filename=product['img_path']) }}" style="max-height:200px">
+				<div class="col-sm-6">
+					<p>Info: <pre>{{ product["info"] }}</pre></p>
+					<p>Price: {{ product["price"] }}</p>
+					<p>Category: {{ product["p_type"] }}</p>
+					<p>Quantity: {{ product["quantity"] }}</p>
+				</div>
+			</div>
+
+		</div>
+		{% endfor %}
+
+		<hr>
+	</div>
+	{% endfor %}
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+

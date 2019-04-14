@@ -227,7 +227,7 @@ def show_order_history():
 	cur = con.cursor()
 
 	orders = con.execute('select * from order_history where username=?',(session["username"],))
-	orders = orders.fetchall();
+	orders = orders.fetchall()
 
 
 	for order in orders:
@@ -382,6 +382,39 @@ def link_product():
 	con.commit()
 	con.close()
 	return redirect(url_for('get_products'))
+
+@app.route('/admin/review_order', methods=["GET","POST"])
+def review_order():
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	orders = con.execute('select * from order_history where approved=0 order by time asc')
+	orders = orders.fetchall()
+
+	for order in orders:
+		order['order_dict'] = eval(order['order_dict'])
+		for product in order['order_dict']['products']:
+			info = con.execute('select * from products where pid=?',(product['pid'],)).fetchone()
+			product.update(info)
+
+	con.close()
+	return render_template('review_order.html', orders=orders)
+
+@app.route('/admin/accept_order', methods=["GET","POST"])
+def accept_order():
+	o_id = request.form['o_id']
+
+	con = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	con.execute('update order_history set approved=1 where o_id=?',(o_id,))
+	con.commit()
+
+	session["flashMsg"] = "order no " + o_id + "approved!"
+	con.close()
+	return redirect(url_for('review_order'))
 
 if __name__ == "__main__":
 	app.run( debug=True)

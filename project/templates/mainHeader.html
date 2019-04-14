@@ -15,9 +15,20 @@
 
 		<ul class="navbar-nav ml-auto">
 				{% if session.username %}
-				<li class="nav-item">
-					<a class="nav-link btn btn-outline-secondary" href="{{ url_for('get_products') }}">Products</a>
+
+				{% if session["user_type"] == "admin" %}
+				<li>
+					<a class="nav-link" href="{{ url_for('add_product') }}">Add product</a>
 				</li>
+
+				<li>
+					<a class="nav-link" href="{{ url_for('review_order') }}">Review Orders</a>
+				</li>
+				{% endif %}
+				<li class="nav-item">
+					<a class="nav-link" href="{{ url_for('get_products') }}">Products</a>
+				</li>
+
 
 				<li class="nav-item dropdown btn-group">
 					<a class="nav-link btn btn-outline-info"
@@ -30,9 +41,6 @@
 					<a class="dropdown-item" href="{{ url_for('show_cart') }}">Show Cart</a>
 					<a class="dropdown-item" href="{{ url_for('show_order_history') }}">Order History</a>
 
-					{% if session["user_type"] == "admin" %}
-					<a class="dropdown-item" href="{{ url_for('add_product') }}">Add product</a>
-					{% endif %}
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" href="{{ url_for('logout') }}">Log Out</a>
 				</div>
