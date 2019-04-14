@@ -40,7 +40,7 @@ def get_products():
 
 	con.close()
 
-	return jsonify(products)
+	return render_template('products.html',products=products)
 
 @app.route('/product/<pid>')
 def product_info(pid):
@@ -80,12 +80,11 @@ def search():
 
 	return jsonify(result)
 
-@app.route('/cart/add')
+@app.route('/cart/add', methods=["GET","POST"])
 def add_to_cart():
-	username = request.args["username"]
-	pid = request.args["pid"]
-	quantity = int(request.args["quantity"])
-	price = request.args["price"]
+	username = session["username"]
+	pid = request.form["pid"]
+	quantity = int(request.form["quantity"])
 
 	con = sql.connect('groceri.db')
 	con.row_factory = dict_factory
@@ -95,11 +94,9 @@ def add_to_cart():
 	entry = entry.fetchone()
 
 	if entry is None:
-		con.execute('insert into cart (username,pid,quantity,price) values (?,?,?,?)',(username, pid,quantity, price))
+		con.execute('insert into cart (username,pid,quantity) values (?,?,?)',(username, pid,quantity ))
 		pass
 	else:
-		print(quantity)
-		print(entry["quantity"])
 		quantity += entry["quantity"]
 		con.execute('update cart set quantity=? where username=? and pid=?',(quantity,username,pid))
 
@@ -118,12 +115,13 @@ def show_cart():
 	con.row_factory = dict_factory
 	cur = con.cursor()
 
-	items = con.execute('select * from cart where username=?',(username,))
-	items = items.fetchall();
+	products = con.execute('select * from cart,products where username=? and cart.pid=products.pid',(username,))
+	products = products.fetchall();
 
 	con.close()
+	print(products)
 
-	return jsonify(items)
+	return render_template('cart.html',products=products)
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():

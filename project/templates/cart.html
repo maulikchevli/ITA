@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}My Cart{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block main %}
+	<h1>My Cart</h1>
+
+	<div class="container">
+		{% for product in products %}
+		<div class="container">
+			<div class="row">
+				<p>{{ product["name"] }}</p>
+			</div>
+			<div class="row">
+				<img class="col-sm-4" src="{{ url_for('static', filename=product['img_path']) }}">
+				<div class="col-sm-6">
+					<p>Info: <pre>{{ product["info"] }}</pre></p>
+					<p>Price: {{ product["price"] }}</p>
+					<p>Category: {{ product["p_type"] }}</p>
+				</div>
+
+				<div class="col-sm-2">
+					<p>Quantity: {{ product["quantity"] }}<p>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
