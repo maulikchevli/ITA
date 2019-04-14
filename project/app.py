@@ -285,6 +285,9 @@ def register():
 			email = request.form['email']
 			password = passHash.hash(request.form['password'])
 			password2 = request.form['password2']
+			address = request.form['address']
+			city = request.form['city']
+			pincode = request.form['pincode']
 			
 			# TODO validate passes
 			registered = False
@@ -299,7 +302,7 @@ def register():
 					registered = False
 					alreadyUser = True
 				else:
-					cur.execute("insert into user_info (username,email,password) values (?,?,?)", (username,email,password))
+					cur.execute("insert into user_info (username,email,password,address,city,pincode) values (?,?,?,?,?,?)", (username,email,password,address,city,pincode))
 					con.commit()
 					registered = True
 					alreadyUser = False
