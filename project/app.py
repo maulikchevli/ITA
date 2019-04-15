@@ -163,7 +163,7 @@ def add_to_cart():
 	con.commit()
 	con.close()
 
-	return redirect(url_for('show_cart'))
+	return jsonify({"result":"Item added to cart!"})
 
 @app.route('/cart/remove', methods=["GET","POST"])
 @login_required
