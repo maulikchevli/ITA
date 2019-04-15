@@ -12,41 +12,56 @@
 	{% if profile['user_type'] == "star" %}
 	<span class="badge badge-primary">Star member</span>
 	{% endif %}
-	<form method="post" action="{{ url_for('change_profile') }}">
+	<form method="post" action="{{ url_for('change_profile') }}" ng-app="myNgApp" name="myForm">
+		<div class="myController">
 		<div class="form-group">
 			<label for="username">Username</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Unique username ( max 20 characters )" disabled
-                value="{{ profile['username'] }}">
+            <input type="text" class="form-control" id="username" name="username" disabled
+                placeholder="{{ profile['username'] }}">
 		</div>
 
 		<div class="form-group">
 			<label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Email for verification and updates" disabled
-                value="{{ profile['email'] }}">
+            <input type="email" class="form-control" id="email" name="email"  disabled
+                placeholder="{{ profile['email'] }}">
 		</div>
 
 		<div class="form-group">
 			<label for="address">Address</label>
-            <input type="text" class="form-control" id="address" name="address" placeholder="Delivery Address" required
-                value=" {{ profile['address'] }}">
+            <input type="text" class="form-control" id="address" name="address"  required
+                placeholder=" {{ profile['address'] }}" ng-model="address">
 		</div>
 
 		<div class="form-row">
 			<div class="form-group col-md-6">
 				<label>City</label>
-				<input class="form-control" name="city" placeholder="City" required value="{{ profile['city'] }}">
+				<input class="form-control" name="city" required placeholder="{{ profile['city'] }}" ng-model="city">
 			</div>
 
 			<div class="form-group col-md-6">
 				<label for="pincode">Pincode</label>
-				<input type="number" class="form-control" name="pincode" placeholder="Pincode" required value="{{ profile['pincode'] }}">
+				<input type="number" class="form-control" name="pincode" required placeholder="{{ profile['pincode'] }}" ng-model="pincode">
 			</div>
 		</div>
 
-		<button type="submit" class="btn btn-outline-success">Update profile</button>
+		<div ng-if="myForm.address.$dirty || myForm.city.$dirty || myForm.pincode.$dirty">
+			<button 
+			type="submit" class="btn btn-outline-success">Update profile</button>
+		</div>
+		</div>
 	</form>
 {% endblock %}
 
 {% block footer %}
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+<script>
+	var ngApp = angular.module('myNgApp',[]);
+	ngApp.config(['$interpolateProvider', function($interpolateProvider) {
+		$interpolateProvider.startSymbol('{a');
+		$interpolateProvider.endSymbol('a}');
+	}]);
+	ngApp.controller('myController', function($scope) {
+	})
+</script>
 {% endblock %}
 

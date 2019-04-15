@@ -23,7 +23,7 @@ footer {
 }
 
 .flash-message {
-	position: absolute;
+	position: fixed;
 	right: 0px;
 	top: 50px;
 }

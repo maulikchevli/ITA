@@ -61,7 +61,7 @@ def get_products():
 	con.row_factory = dict_factory
 	cur = con.cursor()
 
-	products = con.execute('select * from products')
+	products = con.execute('select * from products order by name asc')
 	products = products.fetchall();
 
 	con.close()
@@ -256,7 +256,7 @@ def show_order_history():
 	con.row_factory = dict_factory
 	cur = con.cursor()
 
-	orders = con.execute('select * from order_history where username=?',(session["username"],))
+	orders = con.execute('select * from order_history where username=? order by time desc',(session["username"],))
 	orders = orders.fetchall()
 
 

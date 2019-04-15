@@ -17,7 +17,7 @@
 				<p>{{ product["name"] }}</p>
 			</div>
 			<div class="row">
-				<img class="col-sm-4" src="{{ url_for('static', filename=product['img_path']) }}">
+				<img class="img-thumbnail col-sm-4" src="{{ url_for('static', filename=product['img_path']) }}" style="max-height:200px">
 				<div class="col-sm-6">
 					<p>Info: <pre>{{ product["info"] }}</pre></p>
 					<p>Price: {{ product["price"] }}</p>
@@ -39,9 +39,11 @@
 	<hr>
 	<div class="row">
 		<p class="col">Total: {{ products['total_cost'] }}</p>
+		{% if products['total_cost'] %}
 		<form method="post" action="{{ url_for('buy_cart') }}">
 			<button class="btn btn-outline-success" type="submit">Checkout order</button>
 		</form>
+		{% endif %}
 	</div>
 
 {% endblock %}
