@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block main %}
+	<h1>Profile {{ profile["username"] }}</h1>
+	<form method="post" action="{{ url_for('change_profile') }}">
+		<div class="form-group">
+			<label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Unique username ( max 20 characters )" disabled
+                value="{{ profile['username'] }}">
+		</div>
+
+		<div class="form-group">
+			<label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email for verification and updates" disabled
+                value="{{ profile['email'] }}">
+		</div>
+
+		<div class="form-group">
+			<label for="address">Address</label>
+            <input type="text" class="form-control" id="address" name="address" placeholder="Delivery Address" required
+                value=" {{ profile['address'] }}">
+		</div>
+
+		<div class="form-row">
+			<div class="form-group col-md-6">
+				<label>City</label>
+				<input class="form-control" name="city" placeholder="City" required value="{{ profile['city'] }}">
+			</div>
+
+			<div class="form-group col-md-6">
+				<label for="pincode">Pincode</label>
+				<input type="number" class="form-control" name="pincode" placeholder="Pincode" required value="{{ profile['pincode'] }}">
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-outline-success">Update profile</button>
+	</form>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+

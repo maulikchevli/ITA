@@ -64,7 +64,7 @@ def product_by_pid(pid):
 
 	return render_template('products.html', products=products)
 
-@app.route('/product/<p_type>')
+@app.route('/product/type/<p_type>')
 def product_type(p_type):
 	con = sql.connect('groceri.db')
 	con.row_factory = dict_factory
@@ -311,7 +311,7 @@ def register():
 				cur.execute("SELECT * from user_info where username=? OR email=?",(username,email))
 				users = cur.fetchall()
 				if users:
-					print("already!")
+					session["flashErr"] = "Username already exists"
 					registered = False
 					alreadyUser = True
 				else:
@@ -400,6 +400,8 @@ def link_product():
 	return redirect(url_for('get_products'))
 
 @app.route('/admin/review_order', methods=["GET","POST"])
+@login_required
+@admin_required
 def review_order():
 	con = sql.connect('groceri.db')
 	con.row_factory = dict_factory
@@ -418,6 +420,8 @@ def review_order():
 	return render_template('review_order.html', orders=orders)
 
 @app.route('/admin/accept_order', methods=["GET","POST"])
+@login_required
+@admin_required
 def accept_order():
 	o_id = request.form['o_id']
 
@@ -431,6 +435,39 @@ def accept_order():
 	session["flashMsg"] = "order no " + o_id + "approved!"
 	con.close()
 	return redirect(url_for('review_order'))
+
+@app.route('/profile/change', methods=["GET", "POST"])
+@login_required
+def change_profile():
+	if request.method == "GET":
+		username = session["username"]
+
+		con = sql.connect('groceri.db')
+		con.row_factory = dict_factory
+		cur = con.cursor()
+
+		profile = con.execute('select * from user_info where username=?',(username,)).fetchone()
+
+		con.close()
+		return render_template('profile.html', profile=profile)
+
+	elif request.method == "POST":
+		address = request.form['address']
+		city = request.form['city']
+		pincode = request.form['pincode']
+		username = session["username"]
+
+		con = sql.connect('groceri.db')
+		con.row_factory = dict_factory
+		cur = con.cursor()
+
+		con.execute('update user_info set address=?,city=?,pincode=? where username=?',(address, city, pincode, username))
+		con.commit()
+		con.close()
+
+		session["flashMsg"] = "Your profile updated successfully"
+		return redirect(url_for('change_profile'))
+	
 
 if __name__ == "__main__":
 	app.run( debug=True)
