@@ -38,6 +38,23 @@ def admin_required(f):
 def index():
 	return render_template( 'index.html')
 
+@app.route('/star/request', methods=["GET","POST"])
+@login_required
+def star_request():
+	username = str(session["username"])
+
+	con = sql.connect('star.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	try:
+		con.execute('insert into star_request values (?)',(username,))
+		con.commit()
+	except:
+		return jsonify({"result":"You have already reqested for star status"})
+
+	return jsonify({"result": "Your star request has been sent to admin. If you are accepted a star mark will be shown in your profile"})
+
 @app.route('/products')
 def get_products():
 	con = sql.connect('groceri.db')
@@ -178,7 +195,7 @@ def remove_cart():
 	con.commit()
 	con.close()
 
-	session["flashMsg"] = "Deleted successfully"
+	session["flashMsg"] = "Removed from cart successfully"
 
 	return redirect(url_for('show_cart'))
 
@@ -320,6 +337,7 @@ def register():
 					registered = True
 					alreadyUser = False
 		except:
+			session['flashErr'] = "Database connection terminated or didnt connect"
 			con.rollback()
 			msg = "Error"
 		finally:
@@ -371,6 +389,7 @@ def add_product():
 
 		con.close()
 
+		session["flashMsg"] = "Product added, admin"
 		return redirect(url_for('get_products'))
 
 @app.route('/admin/product/unlink', methods=["GET","POST"])
@@ -384,6 +403,8 @@ def unlink_product():
 	con.execute('update products set to_delete=1 where pid=?',(pid,))
 	con.commit()
 	con.close()
+
+	session['flashMsg'] = "Product Unlinked for now. it will be delete later on"
 	return redirect(url_for('get_products'))
 
 @app.route('/admin/product/link', methods=["GET","POST"])
@@ -397,6 +418,8 @@ def link_product():
 	con.execute('update products set to_delete=0 where pid=?',(pid,))
 	con.commit()
 	con.close()
+
+	session['flashMsg'] = "Product linked"
 	return redirect(url_for('get_products'))
 
 @app.route('/admin/review_order', methods=["GET","POST"])
@@ -467,6 +490,42 @@ def change_profile():
 
 		session["flashMsg"] = "Your profile updated successfully"
 		return redirect(url_for('change_profile'))
+
+@app.route('/admin/star/view', methods=["GET","POST"])
+@login_required
+@admin_required
+def view_star_request():
+	con = sql.connect('star.db')
+	con.row_factory = dict_factory
+	cur = con.cursor()
+
+	users = con.execute('select * from star_request').fetchall()
+
+	return render_template('view_star.html', users=users)
+
+@app.route('/admin/star/accept', methods=["GET","POST"])
+@login_required
+@admin_required
+def accept_star():
+	username = request.form["username"]
+
+	con = sql.connect('star.db')
+	con1 = sql.connect('groceri.db')
+	con.row_factory = dict_factory
+	con1.row_factory = dict_factory
+	cur = con.cursor()
+
+	print(username)
+
+	con.execute('insert into member values (?)', (username,))
+	con.execute('delete from star_request where username=?', (username,))
+	con1.execute('update user_info set user_type="star" where username=?', (username,))
+	con.commit()
+	con1.commit()
+	con.close()
+	con1.commit()
+
+	return jsonify({"result": username+" is given star status"})
 	
 
 if __name__ == "__main__":

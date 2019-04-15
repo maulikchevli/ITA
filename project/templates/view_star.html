@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - view star request{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block main %}
+    <h1>Star requests</h1>
+
+    {% for user in users %}
+    <div class="row" id="{{ user['username'] }}">
+        <div class="col">{{ user["username"] }}</div>
+        <div class="col">
+            {% set username=user['username'] %}
+            <button class="btn btn-primary" onclick="acceptStar('{{ username }}')">Accept request</button>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+

@@ -16,6 +16,12 @@ function addToCart(pid) {
                 $('#flash').slideDown('slow');
                 $('#flash').click(function () { $('#flash').toggle('highlight') });
 			}
-		}
+        },
+        error: function() {
+            $('body').prepend('<div id="flash" class="alert alert-danger" style="display:none"></div>');
+            $('#flash').html("Login or Signup first");
+            $('#flash').slideDown('slow');
+            $('#flash').click(function () { $('#flash').toggle('highlight') });
+        }
 	});
 }

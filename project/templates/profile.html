@@ -8,7 +8,10 @@
 {% endblock %}
 
 {% block main %}
-	<h1>Profile {{ profile["username"] }}</h1>
+	<h1>{{ profile["username"] }}</h1>
+	{% if profile['user_type'] == "star" %}
+	<span class="badge badge-primary">Star member</span>
+	{% endif %}
 	<form method="post" action="{{ url_for('change_profile') }}">
 		<div class="form-group">
 			<label for="username">Username</label>
